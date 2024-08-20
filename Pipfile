@@ -10,6 +10,9 @@ sqlalchemy = "*"
 asyncpg = "*"
 pydantic-settings = "*"
 alembic = "*"
+pyjwt = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
+python-multipart = "*"
 
 [dev-packages]
 
