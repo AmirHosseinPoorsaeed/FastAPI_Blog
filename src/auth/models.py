@@ -2,8 +2,12 @@ import uuid
 from sqlalchemy import Column, String, Boolean
 import sqlalchemy.dialects.postgresql as pg
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 from src.db.main import Base
+
+
+Blog = 'src.blog.models.Blog'
 
 
 class User(Base):
@@ -26,6 +30,7 @@ class User(Base):
         pg.TIMESTAMP, default=datetime.now()
     )
 
+    blogs = relationship(Blog, back_populates='author', lazy='selectin')
+
     def __repr__(self):
         return f'<User {self.username}>'
-

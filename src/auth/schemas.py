@@ -1,18 +1,18 @@
-from datetime import datetime
-from pydantic import BaseModel, Field
 import uuid
+from pydantic import BaseModel, Field
 
 
-class UserDetailModel(BaseModel):
-    uid: uuid.UUID
+class UserShowModel(BaseModel):
     first_name: str
     last_name: str
     username: str
     email: str
+
+
+class UserDetailModel(UserShowModel):
+    uid: uuid.UUID
     role: str
-    hashed_password: str
-    datetiem_created: datetime
-    datetiem_updated: datetime
+    is_active: bool
 
 
 class UserCreateRequest(BaseModel):

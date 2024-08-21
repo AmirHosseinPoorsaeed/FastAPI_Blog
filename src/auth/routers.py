@@ -9,7 +9,7 @@ from src.auth.models import User
 from src.auth.utils import create_access_token, generate_password_hash, verify_password
 from src.db.main import get_session
 from src.config import Config
-from src.auth.schemas import UserChangePasswordRequest, UserCreateRequest
+from src.auth.schemas import UserChangePasswordRequest, UserCreateRequest, UserDetailModel
 from src.auth.service import UserService
 from src.auth.dependencies import RefreshTokenBearer, get_current_user
 
@@ -58,7 +58,8 @@ async def login_for_access_token(
 
 @auth_router.post(
     '/signup',
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserDetailModel
 )
 async def create_user_account(
     user_request: UserCreateRequest,
@@ -148,7 +149,8 @@ async def change_account_password(
 
 @auth_router.get(
     '/me',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    response_model=UserDetailModel
 )
 async def get_current_user(
     current_user: Annotated[User, Depends(get_current_user)]

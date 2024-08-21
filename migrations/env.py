@@ -9,6 +9,8 @@ from alembic import context
 
 from src.config import Config
 from src.db.main import Base
+from src.auth.models import User
+from src.blog.models import Blog
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

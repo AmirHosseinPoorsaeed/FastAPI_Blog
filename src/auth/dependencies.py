@@ -37,8 +37,6 @@ class TokenBearer(HTTPBearer):
                 detail='Token is invalid or expired'
             )
 
-        print(token_data)
-
         self.verify_token_data(token_data)
 
         return token_data
@@ -71,7 +69,6 @@ async def get_current_user(
     token: Annotated[dict, Depends(AccessTokenBearer())],
     db: Annotated[AsyncSession, Depends(get_session)]
 ):
-    print(token)
     username = token.get('sub')
     user = await user_service.get_user_by_username(username, db)
 
