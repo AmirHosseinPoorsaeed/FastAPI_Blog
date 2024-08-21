@@ -8,6 +8,7 @@ from src.db.main import Base
 
 
 Blog = 'src.blog.models.Blog'
+Review = 'src.reviews.models.Review'
 
 
 class User(Base):
@@ -31,6 +32,7 @@ class User(Base):
     )
 
     blogs = relationship(Blog, back_populates='author', lazy='selectin')
+    reviews = relationship(Review, back_populates='author', lazy='selectin')
 
     def __repr__(self):
         return f'<User {self.username}>'

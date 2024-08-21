@@ -15,7 +15,6 @@ class BlogShowModel(BaseModel):
 
 class BlogDetailModel(BlogShowModel):
     author: 'UserShowModel'
-    
 
 
 class BlogCreateRequest(BaseModel):
