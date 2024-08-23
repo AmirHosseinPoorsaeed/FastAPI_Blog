@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from src.auth.routers import auth_router
 from src.blog.routers import blog_router
 from src.reviews.routers import review_router
+from src.tags.routers import tags_router
 
 
 version = 'v1'
@@ -29,4 +30,10 @@ app.include_router(
     review_router,
     prefix=f'/api/{version}/review',
     tags=['review']
+)
+
+app.include_router(
+    tags_router,
+    prefix=f'/api/{version}/tags',
+    tags=['tags']
 )

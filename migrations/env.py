@@ -12,6 +12,7 @@ from src.db.main import Base
 from src.auth.models import User
 from src.blog.models import Blog
 from src.reviews.models import Review
+from src.tags.models import Tag, BlogTag
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

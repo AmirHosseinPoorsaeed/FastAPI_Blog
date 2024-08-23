@@ -9,6 +9,7 @@ from src.db.main import Base
 
 User = 'src.auth.models.User'
 Review = 'src.reviews.models.Review'
+Tag = 'src.tags.models.Tag'
 
 
 class Blog(Base):
@@ -33,11 +34,10 @@ class Blog(Base):
     )
 
     author = relationship(User, back_populates='blogs', lazy='selectin')
-    reviews =  relationship(Review, back_populates='blog', lazy='selectin')
+    reviews = relationship(Review, back_populates='blog', lazy='selectin')
+    tags = relationship(
+        'Tag', secondary='blog_tags', back_populates='blogs', lazy='selectin'
+    )
 
     def __repr__(self):
         return f'<Book {self.title}>'
-
-
-
-
