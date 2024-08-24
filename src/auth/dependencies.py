@@ -7,6 +7,12 @@ from src.auth.service import UserService
 from src.auth.utils import decode_token
 from src.config import Config
 from src.db.main import get_session
+from src.errors import (
+    AccessTokenRequired, 
+    InvalidScheme, 
+    InvalidToken, 
+    RefreshTokenRequired
+)
 
 
 JWT_SECRET = Config.JWT_SECRET
@@ -26,16 +32,10 @@ class TokenBearer(HTTPBearer):
         token_data = decode_token(token)
 
         if not scheme == 'Bearer':
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid authentication scheme."
-            )
+            raise InvalidScheme()
 
         if not self.valid_token(token):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Token is invalid or expired'
-            )
+            raise InvalidToken()
 
         self.verify_token_data(token_data)
 
@@ -50,19 +50,13 @@ class TokenBearer(HTTPBearer):
 class AccessTokenBearer(TokenBearer):
     def verify_token_data(self, token_data: dict) -> None:
         if token_data and token_data['refresh']:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Please provide a valid access token'
-            )
+            raise AccessTokenRequired()
 
 
 class RefreshTokenBearer(TokenBearer):
     def verify_token_data(self, token_data: dict) -> None:
         if token_data and not token_data['refresh']:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='Please provide a valid refresh token'
-            )
+            raise RefreshTokenRequired()
 
 
 async def get_current_user(

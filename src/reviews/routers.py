@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.dependencies import get_current_user
 from src.auth.models import User
 from src.db.main import get_session
+from src.errors import ReviewNotFound
 from src.reviews.schemas import ReviewCreateRequest, ReviewDetailModel, ReviewShowModel
 from src.reviews.service import ReviewService
 
@@ -41,16 +42,13 @@ async def get_review(
     review = await review_service.get_review_by_uid(review_uid, db)
 
     if not review:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Review not found'
-        )
+        raise ReviewNotFound()
 
     return review
 
 
 @review_router.post(
-    '/blogs/{blog_slug}',
+    '/blogs/{blog_slug}/reviews',
     status_code=status.HTTP_201_CREATED,
     response_model=ReviewShowModel
 )

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from src.blog.service import BlogService
+from src.errors import BlogNotFound, TagAlreadyExists, TagNotFound
 from src.tags.models import Tag
 from src.tags.schemas import TagAddRequest, TagCreateRequest
 
@@ -32,10 +33,7 @@ class TagService:
         tag = result.scalars().first()
 
         if tag:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Tag with this title already exists'
-            )
+            raise TagAlreadyExists()
 
         new_tag = Tag(**tag_request.model_dump())
         db.add(new_tag)
@@ -49,10 +47,7 @@ class TagService:
         blog = await blog_service.get_blog_by_slug(blog_slug, db)
 
         if not blog:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Blog not found'
-            )
+            raise BlogNotFound()
 
         for tag_item in tag_request.tags:
             result = await db.execute(
@@ -76,10 +71,7 @@ class TagService:
         tag = await self.get_tag_by_uid(tag_uid, db)
 
         if not tag:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Tag nnot found'
-            )
+            raise TagNotFound()
 
         update_data_dict = tag_update_request.model_dump()
 
@@ -97,10 +89,7 @@ class TagService:
         tag = await self.get_tag_by_uid(tag_uid, db)
 
         if not tag:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Tag not found'
-            )
+            raise TagNotFound()
 
         await db.delete(tag)
         await db.commit()

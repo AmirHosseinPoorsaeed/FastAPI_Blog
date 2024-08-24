@@ -8,6 +8,7 @@ from src.auth.models import User
 from src.blog.schemas import BlogCreateRequest, BlogDetailModel, BlogUpdateRequest, BlogShowModel
 from src.blog.service import BlogService
 from src.db.main import get_session
+from src.errors import BlogNotFound
 
 
 blog_router = APIRouter()
@@ -54,10 +55,7 @@ async def get_blog(
     blog = await blog_service.get_blog_by_slug(blog_slug, db)
 
     if not blog:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Blog not found'
-        )
+        raise BlogNotFound()
 
     return blog
 
@@ -94,10 +92,7 @@ async def update_blog(
     )
 
     if not blog:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Blog not found'
-        )
+        raise BlogNotFound()
 
     return blog
 
@@ -111,13 +106,7 @@ async def delete_blog(
     user: user_dependency,
     db: db_dependency
 ):
-    blog = await blog_service.delete_blog(blog_slug, db)
-
-    if not blog:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='Blog not found'
-        )
+    await blog_service.delete_blog(blog_slug, db)
 
     return JSONResponse(
         content={

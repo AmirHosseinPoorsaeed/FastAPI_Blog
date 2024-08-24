@@ -5,6 +5,7 @@ from sqlalchemy import select
 from src.auth.models import User
 from src.blog.models import Blog
 from src.blog.schemas import BlogCreateRequest, BlogUpdateRequest
+from src.errors import BlogAlreadyExists, BlogNotFound
 
 
 class BlogService:
@@ -33,6 +34,11 @@ class BlogService:
     async def create_blog(
         self, blog_request: BlogCreateRequest, user_uid: str, db: AsyncSession
     ):
+        blog = await self.get_blog_by_slug(blog_request.slug, db)
+
+        if blog:
+            raise BlogAlreadyExists()
+
         blog_data_dict = blog_request.model_dump()
         new_blog = Blog(
             **blog_data_dict,
@@ -51,6 +57,10 @@ class BlogService:
             self, slug: str, blog_update_request: BlogUpdateRequest, db: AsyncSession
     ):
         blog = await self.get_blog_by_slug(slug, db)
+
+        if not blog:
+            raise BlogNotFound()
+
         blog_update_dict = blog_update_request.model_dump()
 
         for k, v in blog_update_dict.items():
@@ -66,9 +76,12 @@ class BlogService:
     ):
         blog = await self.get_blog_by_slug(slug, db)
 
+        if not blog:
+            raise BlogNotFound()
+
         if blog is not None:
             await db.delete(blog)
             await db.commit()
-            return blog
+            return {}
         else:
             return None

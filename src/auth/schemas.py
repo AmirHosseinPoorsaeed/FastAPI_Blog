@@ -15,6 +15,11 @@ class UserDetailModel(UserShowModel):
     is_active: bool
 
 
+class UserLoginModel(BaseModel):
+    username: str
+    password: str
+
+
 class UserCreateRequest(BaseModel):
     first_name: str = Field(max_length=30)
     last_name: str = Field(max_length=30)

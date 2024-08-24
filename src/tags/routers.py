@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated, List
 
 from src.db.main import get_session
+from src.errors import TagNotFound
 from src.tags.schemas import TagAddRequest, TagCreateRequest, TagShowModel
 from src.tags.service import TagService
 
@@ -35,6 +36,10 @@ async def get_tag(
     db: db_dependency
 ):
     tag = await tag_service.get_tag_by_uid(tag_uid, db)
+
+    if not tag:
+        raise TagNotFound()
+    
     return tag
 
 
@@ -52,7 +57,7 @@ async def create_tag(
 
 
 @tags_router.post(
-    'blogs/{blog_slug}/tags',
+    '/blogs/{blog_slug}/tags',
     status_code=status.HTTP_201_CREATED,
 )
 async def add_tag_to_blog(

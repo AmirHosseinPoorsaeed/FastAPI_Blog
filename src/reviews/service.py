@@ -3,6 +3,7 @@ from sqlalchemy import select
 from fastapi import HTTPException, status
 
 from src.auth.models import User
+from src.errors import BlogNotFound, UserNotFound
 from src.reviews.models import Review
 from src.auth.service import UserService
 from src.blog.service import BlogService
@@ -38,16 +39,10 @@ class ReviewService:
         user = await user_service.get_user_by_username(username, db)
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='User not found'
-            )
+            raise UserNotFound()
 
         if not blog:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail='Blog not found'
-            )
+            raise BlogNotFound()
 
         new_reviewe = Review(
             **review_request.model_dump(),
